@@ -17,6 +17,7 @@ class UserPhotoViewController: UIViewController {
     @IBOutlet weak var imgUserPhoto: UIImageView!
     
     @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblFacebookId: UILabel!
     @IBOutlet weak var lblGender: UILabel!
     @IBOutlet weak var lblEmail: UILabel!
     @IBOutlet weak var btnLogout: FBSDKLoginButton!
@@ -41,15 +42,20 @@ class UserPhotoViewController: UIViewController {
             struct Response: GraphResponseProtocol {
                 
                 var email: String?
+                var facebookId: String?
                 var name: String?
                 var gender: String?
                 var pictureUrl: String?
                 
                 init(rawResponse: Any?) {
                     
-                    print(rawResponse)
                     
                     if let data = rawResponse as? NSDictionary {
+                        if let facebookId = data["id"] as? String {
+                            print("Id da criatura: \(facebookId)")
+                            self.facebookId = facebookId
+                        }
+                        
                         if let email = data["email"] as? String {
                             print(email)
                             self.email = email
@@ -103,6 +109,10 @@ class UserPhotoViewController: UIViewController {
                     
                     if let name = graphResponse.name {
                         self.lblName.text = name
+                    }
+                    
+                    if let facebookId = graphResponse.facebookId {
+                        self.lblFacebookId.text = facebookId
                     }
                     
                     if let gender = graphResponse.gender {
