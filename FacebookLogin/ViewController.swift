@@ -7,19 +7,19 @@
 //
 
 import UIKit
-import FBSDKCoreKit
 import FBSDKLoginKit
+import FacebookCore
 
 class ViewController: UIViewController {
+    
+    @IBOutlet weak var btnFacebookLoginButton: FBSDKLoginButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        if FBSDKAccessToken.current() == nil {
-            
-        } else {
-            print(FBSDKAccessToken.current().appID)
+        if FBSDKAccessToken.current() != nil {
+            showUserPhoto()
         }
         
         setupFacebookButton()
@@ -35,20 +35,27 @@ class ViewController: UIViewController {
     
     // MARK: - Facebook Login
     func setupFacebookButton() {
-        let facebookLoginButton = FBSDKLoginButton()
         
-        facebookLoginButton.center = view.center
-        facebookLoginButton.delegate = self
+        btnFacebookLoginButton.readPermissions = ["public_profile"]
         
-        view.addSubview(facebookLoginButton)
+        btnFacebookLoginButton.delegate = self
+    }
+    
+    
+    // MARK: - Navigation
+    func showUserPhoto() {
+        performSegue(withIdentifier: "showUserPhoto", sender: self)
     }
 
 }
 
 extension ViewController: FBSDKLoginButtonDelegate {
     func loginButton(_ loginButton: FBSDKLoginButton!, didCompleteWith result: FBSDKLoginManagerLoginResult!, error: Error!) {
-        print(#function)
-        print(result)
+        print(result.grantedPermissions)
+        
+        if FBSDKAccessToken.current().userID != nil {
+            showUserPhoto()
+        }
     }
     
     func loginButtonWillLogin(_ loginButton: FBSDKLoginButton!) -> Bool {
